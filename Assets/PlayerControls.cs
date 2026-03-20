@@ -6,12 +6,17 @@ public class PlayerControls : MonoBehaviour
     public KeyCode moveDown = KeyCode.S;
     public KeyCode moveRight = KeyCode.D;
     public KeyCode moveLeft = KeyCode.A;
+    public KeyCode shoot = KeyCode.Space;
 
-    public float speed = 5.0f;
+    int lives = 3;
+
+    public float speed = 3.0f;
     public float boundX = 4.0f;
     public float boundY = 3.0f;
     
     private Rigidbody2D rb2d;
+
+    public GameObject bullet;
 
     void Start()
     {
@@ -49,5 +54,36 @@ public class PlayerControls : MonoBehaviour
         if(pos.y < -boundY){
             pos.y = boundY;
         }
+        if(pos.x > boundX){
+            pos.x = -boundX;
+        }
+        if(pos.x < -boundX){
+            pos.x = boundX;
+        }
+        transform.position = pos;
+
+        if(Input.GetKeyDown(shoot)){
+            Shoot();
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D coll){
+        if (coll.collider.CompareTag("Enemy")){
+            Destroy(coll.gameObject);
+            lives--;
+        }
+        if(lives <= 0){
+            // SceneManager.LoadScene("BadEnding");
+            Debug.Log("PERDEU");
+        }
+    }
+
+    void Shoot(){
+        var pos = transform.position;
+        GameObject bulletInstance = Instantiate(bullet, new Vector3(pos.x + 0.5f, pos.y, 0), Quaternion.identity);
+        var bulletRb2d = bulletInstance.GetComponent<Rigidbody2D>();
+        var vel = bulletRb2d.linearVelocity;
+        vel.x = 5.0f;
+        bulletRb2d.linearVelocity = vel;
     }
 }
