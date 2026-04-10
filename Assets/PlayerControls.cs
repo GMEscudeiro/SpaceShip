@@ -8,8 +8,6 @@ public class PlayerControls : MonoBehaviour
     public KeyCode moveLeft = KeyCode.A;
     public KeyCode shoot = KeyCode.Space;
 
-    int lives = 3;
-
     public float speed = 3.0f;
     public float boundX = 4.0f;
     public float boundY = 3.0f;
@@ -70,11 +68,9 @@ public class PlayerControls : MonoBehaviour
     void OnCollisionEnter2D(Collision2D coll){
         if (coll.collider.CompareTag("Enemy")){
             Destroy(coll.gameObject);
-            lives--;
-        }
-        if(lives <= 0){
-            // SceneManager.LoadScene("BadEnding");
-            Debug.Log("PERDEU");
+            if (GameManager.instance != null) {
+                GameManager.instance.TakeDamage();
+            }
         }
     }
 
@@ -85,5 +81,7 @@ public class PlayerControls : MonoBehaviour
         var vel = bulletRb2d.linearVelocity;
         vel.x = 5.0f;
         bulletRb2d.linearVelocity = vel;
+        
+        bulletInstance.AddComponent<BulletBehaviour>();
     }
 }
